@@ -5,11 +5,6 @@
 #include <time.h>
 #include <unistd.h>
 
-// Definizioni delle funzioni in gamelib.c.
-// Piu altre funzioni di supporto.
-// Le funzioni richiamabili in main.c non devono essere static.
-// Le altre devono essere static (non visibili all'esterno).
-
 int c; // Variabile di controllo input
 void svuotaBuffer();
 void color(char color);
@@ -203,7 +198,7 @@ void gioca() {
         printf("\t9. Uccidere l'abitante delle segrete con potere speciale (uccidere quello comparso più presto)\n");
         color('0');
         printf("\t10. Investigare questa zona\n");
-        printf("\t666. Suicidare (Se vuole riunciare il gioco)\n");
+        printf("\t666. Suicidare (se vuole riunciare il gioco)\n");
 
         printf(">> ");
         scanf("%hu", &scelta);
@@ -741,10 +736,10 @@ static char* verifica_tipo_zona(Zona_segrete* pZona) {
   switch (pZona -> tipo_zona) {
     case 0: return "corridoio";
     case 1: return "scala";
-    case 2: return "sala_banchetto";
+    case 2: return "sala banchetto";
     case 3: return "magazzino";
     case 4: return "giardino";
-    case 5: return "posto_guardia";
+    case 5: return "posto guardia";
     case 6: return "prigione";
     case 7: return "cucina";
     case 8: return "armeria";
@@ -840,10 +835,8 @@ static void avanza(Giocatore* giocatore, unsigned short* movimento) {
     color('r');
     printf("Hai già spostato una volta in questo turno!\n");
     color('0');
-  } else if(giocatore -> posizione -> tipo_porta == porta_normale){
-    printf("Hai una porta da aprire\n");
-  } else if(giocatore -> posizione -> tipo_porta == porta_da_scassinare) {
-    printf("Hai una porta da scassinare\n");
+  } else if(giocatore -> posizione -> tipo_porta == porta_normale || giocatore -> posizione -> tipo_porta == porta_da_scassinare){
+    printf("Hai una porta da aprire/scassinare\n");
   } else if(presenza_abitante_nella_zona_di(giocatore)) {
     color('r');
     printf("Non è possibile avanzare prima di aver combattuto tutti gli abitanti in questa zona\n");
@@ -925,7 +918,7 @@ static Abitante_segrete* genera_abitante_segrete(unsigned short probabilita, Zon
   if(numero_casuale < probabilita) {
     nuovo_abitante_segrete = (Abitante_segrete*) (malloc(sizeof(Abitante_segrete)));
     numero_casuale = rand() % 4;
-    //Goblin (2, 1, 1) Skeletro (2, 1, 2) Stragone del caos (3, 2, 2) Doccione (3, 3, 2)
+    //Goblin (2, 1, 1) Skeletro (2, 1, 2) Stragone del caos (3, 2, 2) Doccione (3, 3, 3)
     if(numero_casuale == 0) {
       strcpy(nuovo_abitante_segrete -> nome_abitante_segrete, "Goblin");
       nuovo_abitante_segrete -> dadi_attacco = 2;
@@ -945,7 +938,7 @@ static Abitante_segrete* genera_abitante_segrete(unsigned short probabilita, Zon
       strcpy(nuovo_abitante_segrete -> nome_abitante_segrete, "Doccione");
       nuovo_abitante_segrete -> dadi_attacco = 3;
       nuovo_abitante_segrete -> dadi_difesa = 3;
-      nuovo_abitante_segrete -> p_vita = 2;
+      nuovo_abitante_segrete -> p_vita = 3;
     }
     nuovo_abitante_segrete -> posizione = zona;
     color('p');
@@ -1062,15 +1055,14 @@ static void apri_porta(Giocatore* giocatore, unsigned short* azione) {
     printf("Hai aperto e distrutto la porta\n");
     *azione = *azione + 1;
   } else if(giocatore -> posizione -> tipo_porta == porta_da_scassinare) {
-    printf("Ora inizi a scassinare la porta. Premere l'invio per lanciare il dado...\n");
+    printf("Ora stai scassinando la porta, se il dado lanciato è minore o uguale della tua mente, allora la porta è scassinata\n");
+    printf("Mente del giocatore: %hu. Premere l'invio per lanciare il dado...\n", giocatore -> mente);
     while (getchar() != '\n');
 
     time_t t; // Variabile per la generazione casuale
     srand((unsigned)time(&t));
     unsigned short dado = (rand() % 6) + 1;
     printf("Dado lanciato = %hu \n", dado);
-    printf("Mente del giocatore = %hu\n", giocatore -> mente);
-
     if(dado <= giocatore -> mente) {
       giocatore -> posizione -> tipo_porta = nessuna_porta;
       color('g');
@@ -1159,7 +1151,7 @@ static void scappa(Giocatore* giocatore, unsigned short* movimento) {
     return;
   }
 
-  if(movimento > 0) {
+  if(*movimento > 0) {
     printf("Hai già spostato una volta in questo turno!\n");
     color('0');
     return;
@@ -1502,7 +1494,7 @@ static void evento_speciale(Giocatore* giocatore) {
         giocatore -> posizione -> evento_attivato = false;
         giocatore -> dadi_attacco++;
         color('g');
-        printf("Hai ottenuto la spada di techio! e ti ha guadagnato un dado di attacco in più! (Dadi attacco attuale: %hu)\n", giocatore -> dadi_attacco);
+        printf("Hai ottenuto la spada di teschio! e ti ha guadagnato un dado di attacco in più! (Dadi attacco attuale: %hu)\n", giocatore -> dadi_attacco);
       }
       break;
     case tempio:
