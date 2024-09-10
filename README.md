@@ -6,7 +6,7 @@ Progetto finale Programmazione Procedurale UniPG Informatica
 
 ## Cognome: Shi
 
-## Matricola:368268
+## Matricola:XXXXXX
 
 ## Commenti/modifiche al progetto:
     1. Nella funzione imposta_gioca() è possibile invocare altre tre funzioni (menu_impostazione_mappa(), menu_impostazione_giocatori, menu_impostazione_tempo_pausa()), per lasciare all'utente più libero e flessibile ad impostare il gioco
